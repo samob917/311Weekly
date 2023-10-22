@@ -1,0 +1,1284 @@
+2023-10-22 17:30:00 [INFO] Question: How many complaints are there?
+2023-10-22 17:31:01 [INFO] Question: How many complaints are there?
+2023-10-22 17:36:52 [INFO] Question: How many complaints have we had in Manhattan?
+2023-10-22 17:36:52 [INFO] Running PandasAI with openai LLM...
+2023-10-22 17:36:52 [INFO] Prompt ID: e47b8a86-93c4-420d-9f87-11b58a5c34f8
+2023-10-22 17:36:52 [INFO] Using prompt: 
+You are provided with the following pandas DataFrames:
+
+<dataframe>
+Dataframe dfs[0], with 1000 rows and 45 columns.
+This is the metadata of the dataframe dfs[0]:
+unique_key,created_date,closed_date,agency,agency_name,complaint_type,descriptor,location_type,incident_zip,incident_address,street_name,cross_street_1,cross_street_2,intersection_street_1,intersection_street_2,address_type,status,resolution_description,resolution_action_updated_date,community_board,borough,x_coordinate_state_plane,y_coordinate_state_plane,open_data_channel_type,park_facility_name,park_borough,latitude,longitude,location,:@computed_region_efsh_h5xi,:@computed_region_f5dn_yrer,:@computed_region_yeji_bk3q,:@computed_region_92fq_4b7q,:@computed_region_sbqj_enih,city,landmark,bbl,facility_type,due_date,taxi_pick_up_location,taxi_company_borough,bridge_highway_name,bridge_highway_direction,bridge_highway_segment,road_ramp
+59052487,2023-10-08T15:53:09.000,2023-10-08T16:15:42.000,NYPD,New York City Police D...,Non-Emergency Police M...,Other (complaint details),Street/Sidewalk,11218,40 ARGYLE ROAD,ARGYLE ROAD,CATON AVENUE,CHURCH AVENUE,CATON AVENUE,CHURCH AVENUE,ADDRESS,Closed,The Police Department ...,2023-10-08T16:15:48.000,14 BROOKLYN,BROOKLYN,993204,175582,ONLINE,Unspecified,BROOKLYN,40.648604160143165,-73.96773270356002,"{'latitude': '40.648604160143165', 'longitude': '-73.96773270356002', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",17620,60,2,11,43,BROOKLYN,ARGYLE ROAD,5518182159,,,,,,,,
+59057185,2023-10-08T15:53:14.000,2023-10-08T16:04:25.000,NYPD,New York City Police D...,Noise - Street/Sidewal...,Loud Music/Party,Street/Sidewalk,10026,304 WEST  115 STREET,WEST  115 STREET,FREDERICK DOUGLASS BOULEVARD,MANHATTAN AVENUE,FREDERICK DOUGLASS BOULEVARD,MANHATTAN AVENUE,ADDRESS,Closed,The Police Department ...,2023-10-08T16:04:27.000,10 MANHATTAN,MANHATTAN,996315,232188,ONLINE,Unspecified,MANHATTAN,40.80397010417189,-73.95642019030862,"{'latitude': '40.80397010417189', 'longitude': '-73.95642019030862', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",12423,18,4,36,18,NEW YORK,WEST  115 STREET,7685714340,,,,,,,,
+59054949,2023-10-08T15:53:00.000,2023-10-10T03:25:00.000,DOT,Department of Transpor...,Traffic Signal Conditi...,Veh Signal Visor,,10474,,,,,HALLECK STREET,RANDALL AVENUE,INTERSECTION,Closed,Service Request status...,2023-10-10T03:25:00.000,02 BRONX,BRONX,1017133,235467,UNKNOWN,Unspecified,BRONX,40.81291709102045,-73.88120779869882,"{'latitude': '40.81291709102045', 'longitude': '-73.88120779869882', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",12343,8,5,43,24,BRONX,,4444839294,N/A,,,,,,,
+59050917,2023-10-08T15:53:36.000,2023-10-12T10:53:36.000,DOT,Department of Transpor...,Street Sign - Dangling...,St Name - Attached to Pole,Street,11364,EAST HAMPTON BOULEVARD,EAST HAMPTON BOULEVARD,58 AVENUE,EAST HAMPTON BOULEVARD,58 AVENUE,EAST HAMPTON BOULEVARD,INTERSECTION,Closed,The Department of Tran...,2023-10-12T10:53:42.000,11 QUEENS,QUEENS,1054178,213901,MOBILE,Unspecified,QUEENS,40.753508844842884,-73.74760509687165,"{'latitude': '40.753508844842884', 'longitude': '-73.74760509687165', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",14506,26,3,16,69,,,2571000598,,,,,,,,
+59056238,2023-10-08T15:53:28.000,2023-10-08T16:22:48.000,NYPD,New York City Police D...,Noise - Street/Sidewal...,Loud Music/Party,Street/Sidewalk,11372,88-10 34 AVENUE,34 AVENUE,88 STREET,89 STREET,88 STREET,89 STREET,ADDRESS,Closed,The Police Department ...,2023-10-08T16:22:50.000,03 QUEENS,QUEENS,1017704,214123,ONLINE,Unspecified,QUEENS,40.75433140368015,-73.87925131070884,"{'latitude': '40.75433140368015', 'longitude': '-73.87925131070884', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",14783,65,3,5,73,JACKSON HEIGHTS,34 AVENUE,3255621870,,,,,,,,
+</dataframe>
+
+<conversation>
+User 1: How many complaints have we had in Manhattan?
+</conversation>
+
+This is the initial python code to be updated:
+```python
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+```
+
+Using the provided dataframes (`dfs`), update the python code based on the last question in the conversation.
+
+Updated code:
+
+2023-10-22 17:37:10 [INFO] Code generated:
+```
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    # Prepare
+    df = dfs[0]
+    
+    # Process
+    complaints_in_manhattan = df[df['borough'] == 'MANHATTAN'].shape[0]
+    
+    # Analyze
+    result = {
+        "type": "number",
+        "value": complaints_in_manhattan
+    }
+    
+    return result
+```
+
+2023-10-22 17:37:10 [INFO] 
+Code running:
+```
+def analyze_data(dfs: list[pd.DataFrame]) ->dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    df = dfs[0]
+    complaints_in_manhattan = df[df['borough'] == 'MANHATTAN'].shape[0]
+    result = {'type': 'number', 'value': complaints_in_manhattan}
+    return result
+        ```
+2023-10-22 17:37:10 [INFO] Answer: {'type': 'number', 'value': 349}
+2023-10-22 17:37:10 [INFO] Executed in: 18.364832162857056s
+2023-10-22 17:37:55 [INFO] Question: Summarize the complaints of all the people who live in Manhattan?
+2023-10-22 17:37:55 [INFO] Running PandasAI with openai LLM...
+2023-10-22 17:37:55 [INFO] Prompt ID: 0c65e3fa-9a34-42cc-b365-25c14a9cd64b
+2023-10-22 17:37:55 [INFO] Using prompt: 
+You are provided with the following pandas DataFrames:
+
+<dataframe>
+Dataframe dfs[0], with 1000 rows and 45 columns.
+This is the metadata of the dataframe dfs[0]:
+unique_key,created_date,closed_date,agency,agency_name,complaint_type,descriptor,location_type,incident_zip,incident_address,street_name,cross_street_1,cross_street_2,intersection_street_1,intersection_street_2,address_type,status,resolution_description,resolution_action_updated_date,community_board,borough,x_coordinate_state_plane,y_coordinate_state_plane,open_data_channel_type,park_facility_name,park_borough,latitude,longitude,location,:@computed_region_efsh_h5xi,:@computed_region_f5dn_yrer,:@computed_region_yeji_bk3q,:@computed_region_92fq_4b7q,:@computed_region_sbqj_enih,city,landmark,bbl,facility_type,due_date,taxi_pick_up_location,taxi_company_borough,bridge_highway_name,bridge_highway_direction,bridge_highway_segment,road_ramp
+59050917,2023-10-08T15:53:36.000,2023-10-12T10:53:36.000,DOT,Department of Transpor...,Street Sign - Dangling,St Name - Attached to ...,Street,11364,EAST HAMPTON BOULEVARD,EAST HAMPTON BOULEVARD,58 AVENUE,EAST HAMPTON BOULEVARD,58 AVENUE,EAST HAMPTON BOULEVARD,INTERSECTION,Closed,The Department of Tran...,2023-10-12T10:53:42.000,11 QUEENS,QUEENS,1054178,213901,MOBILE,Unspecified,QUEENS,40.753508844842884,-73.74760509687165,"{'latitude': '40.753508844842884', 'longitude': '-73.74760509687165', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",14506,26,3,16,69,,,,,,,,,,,
+59054949,2023-10-08T15:53:00.000,2023-10-10T03:25:00.000,DOT,Department of Transpor...,Traffic Signal Condition,Veh Signal Visor...,,10474,,,,,HALLECK STREET,RANDALL AVENUE,INTERSECTION,Closed,Service Request status...,2023-10-10T03:25:00.000,02 BRONX,BRONX,1017133,235467,UNKNOWN,Unspecified,BRONX,40.81291709102045,-73.88120779869882,"{'latitude': '40.81291709102045', 'longitude': '-73.88120779869882', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",12343,8,5,43,24,BRONX,,,N/A,,,,,,,
+59056238,2023-10-08T15:53:28.000,2023-10-08T16:22:48.000,NYPD,New York City Police D...,Noise - Street/Sidewalk,Loud Music/Party...,Street/Sidewalk,11372,88-10 34 AVENUE,34 AVENUE,88 STREET,89 STREET,88 STREET,89 STREET,ADDRESS,Closed,The Police Department ...,2023-10-08T16:22:50.000,03 QUEENS,QUEENS,1017704,214123,ONLINE,Unspecified,QUEENS,40.75433140368015,-73.87925131070884,"{'latitude': '40.75433140368015', 'longitude': '-73.87925131070884', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",14783,65,3,5,73,JACKSON HEIGHTS,34 AVENUE,4014490001,,,,,,,,
+59052487,2023-10-08T15:53:09.000,2023-10-08T16:15:42.000,NYPD,New York City Police D...,Non-Emergency Police Matter,Other (complaint detai...,Street/Sidewalk,11218,40 ARGYLE ROAD,ARGYLE ROAD,CATON AVENUE,CHURCH AVENUE,CATON AVENUE,CHURCH AVENUE,ADDRESS,Closed,The Police Department ...,2023-10-08T16:15:48.000,14 BROOKLYN,BROOKLYN,993204,175582,ONLINE,Unspecified,BROOKLYN,40.648604160143165,-73.96773270356002,"{'latitude': '40.648604160143165', 'longitude': '-73.96773270356002', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",17620,60,2,11,43,BROOKLYN,ARGYLE ROAD,3050730019,,,,,,,,
+59057185,2023-10-08T15:53:14.000,2023-10-08T16:04:25.000,NYPD,New York City Police D...,Noise - Street/Sidewalk,Loud Music/Party...,Street/Sidewalk,10026,304 WEST  115 STREET,WEST  115 STREET,FREDERICK DOUGLASS BOULEVARD,MANHATTAN AVENUE,FREDERICK DOUGLASS BOULEVARD,MANHATTAN AVENUE,ADDRESS,Closed,The Police Department ...,2023-10-08T16:04:27.000,10 MANHATTAN,MANHATTAN,996315,232188,ONLINE,Unspecified,MANHATTAN,40.80397010417189,-73.95642019030862,"{'latitude': '40.80397010417189', 'longitude': '-73.95642019030862', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",12423,18,4,36,18,NEW YORK,WEST  115 STREET,1018487501,,,,,,,,
+</dataframe>
+
+<conversation>
+User 1: Summarize the complaints of all the people who live in Manhattan?
+</conversation>
+
+This is the initial python code to be updated:
+```python
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+```
+
+Using the provided dataframes (`dfs`), update the python code based on the last question in the conversation.
+
+Updated code:
+
+2023-10-22 17:38:16 [INFO] Code generated:
+```
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    # Prepare: Preprocessing and cleaning data if necessary
+    df = dfs[0]
+    
+    # Process: Manipulating data for analysis
+    manhattan_complaints = df[df['borough'] == 'MANHATTAN']['complaint_type']
+    complaint_summary = manhattan_complaints.value_counts()
+    
+    # Analyze: Conducting the actual analysis
+    result = {
+        "type": "dataframe",
+        "value": complaint_summary
+    }
+    
+    return result
+```
+
+2023-10-22 17:38:16 [INFO] 
+Code running:
+```
+def analyze_data(dfs: list[pd.DataFrame]) ->dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    df = dfs[0]
+    manhattan_complaints = df[df['borough'] == 'MANHATTAN']['complaint_type']
+    complaint_summary = manhattan_complaints.value_counts()
+    result = {'type': 'dataframe', 'value': complaint_summary}
+    return result
+        ```
+2023-10-22 17:38:16 [INFO] Answer: {'type': 'dataframe', 'value': Noise - Helicopter                86
+Noise - Street/Sidewalk           52
+Noise - Vehicle                   32
+Illegal Parking                   27
+For Hire Vehicle Complaint        19
+HEAT/HOT WATER                    14
+PLUMBING                          13
+Noise - Residential               12
+UNSANITARY CONDITION               8
+Dirty Condition                    7
+Encampment                         6
+PAINT/PLASTER                      6
+Street Condition                   5
+Noise - Park                       4
+Food Establishment                 4
+Elevator                           4
+Non-Emergency Police Matter        3
+Noise                              3
+Maintenance or Facility            3
+GENERAL                            3
+Noise - Commercial                 3
+Illegal Dumping                    3
+General Construction/Plumbing      3
+Rodent                             2
+Homeless Person Assistance         2
+WATER LEAK                         2
+Traffic                            2
+Sidewalk Condition                 2
+School Maintenance                 1
+Water System                       1
+Litter Basket Request              1
+Drug Activity                      1
+Hazardous Materials                1
+Vendor Enforcement                 1
+Damaged Tree                       1
+Blocked Driveway                   1
+Indoor Air Quality                 1
+Mobile Food Vendor                 1
+Missed Collection                  1
+DOOR/WINDOW                        1
+Abandoned Vehicle                  1
+Graffiti                           1
+Building/Use                       1
+Residential Disposal Complaint     1
+Animal in a Park                   1
+Lead                               1
+Taxi Complaint                     1
+Name: complaint_type, dtype: int64}
+2023-10-22 17:38:16 [INFO] Executed in: 20.280067205429077s
+2023-10-22 17:53:25 [INFO] Question: Summarize the complaints of all the people who live in Manhattan?
+2023-10-22 17:53:25 [INFO] Running PandasAI with openai LLM...
+2023-10-22 17:53:25 [INFO] Prompt ID: 3b26a148-de88-4bd8-8cbd-a4dd034d2f1b
+2023-10-22 17:53:25 [INFO] Using cached response
+2023-10-22 17:53:25 [INFO] Code generated:
+```
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    # Prepare: Preprocessing and cleaning data if necessary
+    df = dfs[0]
+    
+    # Process: Manipulating data for analysis
+    manhattan_complaints = df[df['borough'] == 'MANHATTAN']['complaint_type']
+    complaint_summary = manhattan_complaints.value_counts()
+    
+    # Analyze: Conducting the actual analysis
+    result = {
+        "type": "dataframe",
+        "value": complaint_summary
+    }
+    
+    return result
+```
+
+2023-10-22 17:53:25 [INFO] 
+Code running:
+```
+def analyze_data(dfs: list[pd.DataFrame]) ->dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    df = dfs[0]
+    manhattan_complaints = df[df['borough'] == 'MANHATTAN']['complaint_type']
+    complaint_summary = manhattan_complaints.value_counts()
+    result = {'type': 'dataframe', 'value': complaint_summary}
+    return result
+        ```
+2023-10-22 17:53:25 [INFO] Answer: {'type': 'dataframe', 'value': Noise - Helicopter                86
+Noise - Street/Sidewalk           52
+Noise - Vehicle                   32
+Illegal Parking                   27
+For Hire Vehicle Complaint        19
+HEAT/HOT WATER                    14
+PLUMBING                          13
+Noise - Residential               12
+UNSANITARY CONDITION               8
+Dirty Condition                    7
+Encampment                         6
+PAINT/PLASTER                      6
+Street Condition                   5
+Noise - Park                       4
+Food Establishment                 4
+Elevator                           4
+Non-Emergency Police Matter        3
+Noise                              3
+Maintenance or Facility            3
+GENERAL                            3
+Noise - Commercial                 3
+Illegal Dumping                    3
+General Construction/Plumbing      3
+Rodent                             2
+Homeless Person Assistance         2
+WATER LEAK                         2
+Traffic                            2
+Sidewalk Condition                 2
+School Maintenance                 1
+Water System                       1
+Litter Basket Request              1
+Drug Activity                      1
+Hazardous Materials                1
+Vendor Enforcement                 1
+Damaged Tree                       1
+Blocked Driveway                   1
+Indoor Air Quality                 1
+Mobile Food Vendor                 1
+Missed Collection                  1
+DOOR/WINDOW                        1
+Abandoned Vehicle                  1
+Graffiti                           1
+Building/Use                       1
+Residential Disposal Complaint     1
+Animal in a Park                   1
+Lead                               1
+Taxi Complaint                     1
+Name: complaint_type, dtype: int64}
+2023-10-22 17:53:25 [INFO] Executed in: 0.08565974235534668s
+2023-10-22 17:53:49 [INFO] Question: Summarize the complaints of all the people who live in Manhattan?
+2023-10-22 17:53:49 [INFO] Running PandasAI with openai LLM...
+2023-10-22 17:53:49 [INFO] Prompt ID: d6f855b6-d6ee-4a66-9d2a-0000f5d92988
+2023-10-22 17:53:49 [INFO] Using cached response
+2023-10-22 17:53:49 [INFO] Code generated:
+```
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    # Prepare: Preprocessing and cleaning data if necessary
+    df = dfs[0]
+    
+    # Process: Manipulating data for analysis
+    manhattan_complaints = df[df['borough'] == 'MANHATTAN']['complaint_type']
+    complaint_summary = manhattan_complaints.value_counts()
+    
+    # Analyze: Conducting the actual analysis
+    result = {
+        "type": "dataframe",
+        "value": complaint_summary
+    }
+    
+    return result
+```
+
+2023-10-22 17:53:49 [INFO] 
+Code running:
+```
+def analyze_data(dfs: list[pd.DataFrame]) ->dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    df = dfs[0]
+    manhattan_complaints = df[df['borough'] == 'MANHATTAN']['complaint_type']
+    complaint_summary = manhattan_complaints.value_counts()
+    result = {'type': 'dataframe', 'value': complaint_summary}
+    return result
+        ```
+2023-10-22 17:53:49 [INFO] Answer: {'type': 'dataframe', 'value': Noise - Helicopter                86
+Noise - Street/Sidewalk           52
+Noise - Vehicle                   32
+Illegal Parking                   27
+For Hire Vehicle Complaint        19
+HEAT/HOT WATER                    14
+PLUMBING                          13
+Noise - Residential               12
+UNSANITARY CONDITION               8
+Dirty Condition                    7
+Encampment                         6
+PAINT/PLASTER                      6
+Street Condition                   5
+Noise - Park                       4
+Food Establishment                 4
+Elevator                           4
+Non-Emergency Police Matter        3
+Noise                              3
+Maintenance or Facility            3
+GENERAL                            3
+Noise - Commercial                 3
+Illegal Dumping                    3
+General Construction/Plumbing      3
+Rodent                             2
+Homeless Person Assistance         2
+WATER LEAK                         2
+Traffic                            2
+Sidewalk Condition                 2
+School Maintenance                 1
+Water System                       1
+Litter Basket Request              1
+Drug Activity                      1
+Hazardous Materials                1
+Vendor Enforcement                 1
+Damaged Tree                       1
+Blocked Driveway                   1
+Indoor Air Quality                 1
+Mobile Food Vendor                 1
+Missed Collection                  1
+DOOR/WINDOW                        1
+Abandoned Vehicle                  1
+Graffiti                           1
+Building/Use                       1
+Residential Disposal Complaint     1
+Animal in a Park                   1
+Lead                               1
+Taxi Complaint                     1
+Name: complaint_type, dtype: int64}
+2023-10-22 17:53:49 [INFO] Executed in: 0.08355879783630371s
+2023-10-22 17:54:56 [INFO] error_code=None error_message="This model's maximum context length is 4097 tokens, however you requested 5540 tokens (4540 in your prompt; 1000 for the completion). Please reduce your prompt; or completion length." error_param=None error_type=invalid_request_error message='OpenAI API error received' stream_error=False
+2023-10-22 17:55:38 [INFO] Question: Summarize the complaints of all the people who live in Brooklyn?
+2023-10-22 17:55:38 [INFO] Running PandasAI with openai LLM...
+2023-10-22 17:55:38 [INFO] Prompt ID: 24e6e301-734d-4dcf-8d02-c8ba650e6679
+2023-10-22 17:55:38 [INFO] Using prompt: 
+You are provided with the following pandas DataFrames:
+
+<dataframe>
+Dataframe dfs[0], with 1000 rows and 45 columns.
+This is the metadata of the dataframe dfs[0]:
+unique_key,created_date,closed_date,agency,agency_name,complaint_type,descriptor,location_type,incident_zip,incident_address,street_name,cross_street_1,cross_street_2,intersection_street_1,intersection_street_2,address_type,status,resolution_description,resolution_action_updated_date,community_board,borough,x_coordinate_state_plane,y_coordinate_state_plane,open_data_channel_type,park_facility_name,park_borough,latitude,longitude,location,:@computed_region_efsh_h5xi,:@computed_region_f5dn_yrer,:@computed_region_yeji_bk3q,:@computed_region_92fq_4b7q,:@computed_region_sbqj_enih,city,landmark,bbl,facility_type,due_date,taxi_pick_up_location,taxi_company_borough,bridge_highway_name,bridge_highway_direction,bridge_highway_segment,road_ramp
+59056238,2023-10-08T15:53:28.000,2023-10-08T16:22:48.000,NYPD,New York City Police D...,Noise - Street/Sidewalk,Loud Music/Party,Street/Sidewalk,11372,88-10 34 AVENUE,34 AVENUE,88 STREET,89 STREET,88 STREET,89 STREET,ADDRESS,Closed,The Police Department ...,2023-10-08T16:22:50.000,03 QUEENS,QUEENS,1017704,214123,ONLINE,Unspecified,QUEENS,40.75433140368015,-73.87925131070884,"{'latitude': '40.75433140368015', 'longitude': '-73.87925131070884', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",14783,65,3,5,73,JACKSON HEIGHTS,34 AVENUE,6237696216,,,,,,,,
+59057185,2023-10-08T15:53:14.000,2023-10-08T16:04:25.000,NYPD,New York City Police D...,Noise - Street/Sidewalk,Loud Music/Party,Street/Sidewalk,10026,304 WEST  115 STREET,WEST  115 STREET,FREDERICK DOUGLASS BOULEVARD,MANHATTAN AVENUE,FREDERICK DOUGLASS BOULEVARD,MANHATTAN AVENUE,ADDRESS,Closed,The Police Department ...,2023-10-08T16:04:27.000,10 MANHATTAN,MANHATTAN,996315,232188,ONLINE,Unspecified,MANHATTAN,40.80397010417189,-73.95642019030862,"{'latitude': '40.80397010417189', 'longitude': '-73.95642019030862', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",12423,18,4,36,18,NEW YORK,WEST  115 STREET,7340928308,,,,,,,,
+59054949,2023-10-08T15:53:00.000,2023-10-10T03:25:00.000,DOT,Department of Transpor...,Traffic Signal Condition,Veh Signal Visor,,10474,,,,,HALLECK STREET,RANDALL AVENUE,INTERSECTION,Closed,Service Request status...,2023-10-10T03:25:00.000,02 BRONX,BRONX,1017133,235467,UNKNOWN,Unspecified,BRONX,40.81291709102045,-73.88120779869882,"{'latitude': '40.81291709102045', 'longitude': '-73.88120779869882', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",12343,8,5,43,24,BRONX,,4649806466,N/A,,,,,,,
+59050917,2023-10-08T15:53:36.000,2023-10-12T10:53:36.000,DOT,Department of Transpor...,Street Sign - Dangling,St Name - Attached to Pole,Street,11364,EAST HAMPTON BOULEVARD,EAST HAMPTON BOULEVARD,58 AVENUE,EAST HAMPTON BOULEVARD,58 AVENUE,EAST HAMPTON BOULEVARD,INTERSECTION,Closed,The Department of Tran...,2023-10-12T10:53:42.000,11 QUEENS,QUEENS,1054178,213901,MOBILE,Unspecified,QUEENS,40.753508844842884,-73.74760509687165,"{'latitude': '40.753508844842884', 'longitude': '-73.74760509687165', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",14506,26,3,16,69,,,2211636407,,,,,,,,
+59052487,2023-10-08T15:53:09.000,2023-10-08T16:15:42.000,NYPD,New York City Police D...,Non-Emergency Police Matter,Other (complaint details),Street/Sidewalk,11218,40 ARGYLE ROAD,ARGYLE ROAD,CATON AVENUE,CHURCH AVENUE,CATON AVENUE,CHURCH AVENUE,ADDRESS,Closed,The Police Department ...,2023-10-08T16:15:48.000,14 BROOKLYN,BROOKLYN,993204,175582,ONLINE,Unspecified,BROOKLYN,40.648604160143165,-73.96773270356002,"{'latitude': '40.648604160143165', 'longitude': '-73.96773270356002', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}",17620,60,2,11,43,BROOKLYN,ARGYLE ROAD,1306300564,,,,,,,,
+</dataframe>
+
+<conversation>
+User 1: Summarize the complaints of all the people who live in Brooklyn?
+</conversation>
+
+This is the initial python code to be updated:
+```python
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+```
+
+Using the provided dataframes (`dfs`), update the python code based on the last question in the conversation.
+
+Updated code:
+
+2023-10-22 17:55:58 [INFO] Code generated:
+```
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    # Prepare: Preprocessing and cleaning data if necessary
+    df = dfs[0]
+    
+    # Process: Manipulating data for analysis
+    brooklyn_complaints = df[df['borough'] == 'BROOKLYN']['complaint_type'].value_counts()
+    
+    # Analyze: Conducting the actual analysis
+    result = {
+        "type": "dataframe",
+        "value": brooklyn_complaints
+    }
+    
+    return result
+```
+
+2023-10-22 17:55:58 [INFO] 
+Code running:
+```
+def analyze_data(dfs: list[pd.DataFrame]) ->dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    df = dfs[0]
+    brooklyn_complaints = df[df['borough'] == 'BROOKLYN']['complaint_type'].value_counts()
+    result = {'type': 'dataframe', 'value': brooklyn_complaints}
+    return result
+        ```
+2023-10-22 17:55:58 [INFO] Answer: {'type': 'dataframe', 'value': Illegal Parking                   54
+HEAT/HOT WATER                    25
+UNSANITARY CONDITION              17
+WATER LEAK                        13
+Noise - Residential               10
+Illegal Dumping                    9
+Blocked Driveway                   9
+Graffiti                           9
+Missed Collection                  8
+Dirty Condition                    7
+GENERAL                            6
+PAINT/PLASTER                      6
+Noise - Street/Sidewalk            5
+Noise - Helicopter                 5
+Residential Disposal Complaint     4
+Street Condition                   4
+Mobile Food Vendor                 4
+For Hire Vehicle Complaint         4
+Encampment                         4
+Abandoned Vehicle                  4
+DOOR/WINDOW                        4
+Water System                       3
+General Construction/Plumbing      3
+Rodent                             3
+Non-Emergency Police Matter        3
+Maintenance or Facility            3
+Building/Use                       3
+Homeless Person Assistance         3
+New Tree Request                   2
+Consumer Complaint                 2
+Dead Animal                        2
+Urinating in Public                1
+Food Establishment                 1
+Noise                              1
+Street Sign - Missing              1
+Indoor Air Quality                 1
+Noise - Park                       1
+Highway Condition                  1
+Asbestos                           1
+Bike/Roller/Skate Chronic          1
+Animal-Abuse                       1
+PLUMBING                           1
+Obstruction                        1
+Noise - Vehicle                    1
+Sewer                              1
+Elevator                           1
+SAFETY                             1
+FLOORING/STAIRS                    1
+Damaged Tree                       1
+Name: complaint_type, dtype: int64}
+2023-10-22 17:55:58 [INFO] Executed in: 20.009759187698364s
+2023-10-22 17:56:52 [INFO] Question: Summarize the complaints of all the people who live in Brooklyn?
+2023-10-22 17:56:52 [INFO] Running PandasAI with openai LLM...
+2023-10-22 17:56:52 [INFO] Prompt ID: 4605e4c4-2efe-4273-859c-fa8f16fc8096
+2023-10-22 17:56:52 [INFO] Using cached response
+2023-10-22 17:56:52 [INFO] Code generated:
+```
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    # Prepare: Preprocessing and cleaning data if necessary
+    df = dfs[0]
+    
+    # Process: Manipulating data for analysis
+    brooklyn_complaints = df[df['borough'] == 'BROOKLYN']['complaint_type'].value_counts()
+    
+    # Analyze: Conducting the actual analysis
+    result = {
+        "type": "dataframe",
+        "value": brooklyn_complaints
+    }
+    
+    return result
+```
+
+2023-10-22 17:56:52 [INFO] 
+Code running:
+```
+def analyze_data(dfs: list[pd.DataFrame]) ->dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    df = dfs[0]
+    brooklyn_complaints = df[df['borough'] == 'BROOKLYN']['complaint_type'].value_counts()
+    result = {'type': 'dataframe', 'value': brooklyn_complaints}
+    return result
+        ```
+2023-10-22 17:56:52 [INFO] Answer: {'type': 'dataframe', 'value': Illegal Parking                   54
+HEAT/HOT WATER                    25
+UNSANITARY CONDITION              17
+WATER LEAK                        13
+Noise - Residential               10
+Illegal Dumping                    9
+Blocked Driveway                   9
+Graffiti                           9
+Missed Collection                  8
+Dirty Condition                    7
+GENERAL                            6
+PAINT/PLASTER                      6
+Noise - Street/Sidewalk            5
+Noise - Helicopter                 5
+Residential Disposal Complaint     4
+Street Condition                   4
+Mobile Food Vendor                 4
+For Hire Vehicle Complaint         4
+Encampment                         4
+Abandoned Vehicle                  4
+DOOR/WINDOW                        4
+Water System                       3
+General Construction/Plumbing      3
+Rodent                             3
+Non-Emergency Police Matter        3
+Maintenance or Facility            3
+Building/Use                       3
+Homeless Person Assistance         3
+New Tree Request                   2
+Consumer Complaint                 2
+Dead Animal                        2
+Urinating in Public                1
+Food Establishment                 1
+Noise                              1
+Street Sign - Missing              1
+Indoor Air Quality                 1
+Noise - Park                       1
+Highway Condition                  1
+Asbestos                           1
+Bike/Roller/Skate Chronic          1
+Animal-Abuse                       1
+PLUMBING                           1
+Obstruction                        1
+Noise - Vehicle                    1
+Sewer                              1
+Elevator                           1
+SAFETY                             1
+FLOORING/STAIRS                    1
+Damaged Tree                       1
+Name: complaint_type, dtype: int64}
+2023-10-22 17:56:52 [INFO] Executed in: 0.08842611312866211s
+2023-10-22 17:57:12 [INFO] Question: Summarize the complaints of all the people who live in Brooklyn?
+2023-10-22 17:57:12 [INFO] Running PandasAI with openai LLM...
+2023-10-22 17:57:12 [INFO] Prompt ID: ee22fb64-4f89-430e-98d0-12727771046e
+2023-10-22 17:57:12 [INFO] Using cached response
+2023-10-22 17:57:12 [INFO] Code generated:
+```
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    # Prepare: Preprocessing and cleaning data if necessary
+    df = dfs[0]
+    
+    # Process: Manipulating data for analysis
+    brooklyn_complaints = df[df['borough'] == 'BROOKLYN']['complaint_type'].value_counts()
+    
+    # Analyze: Conducting the actual analysis
+    result = {
+        "type": "dataframe",
+        "value": brooklyn_complaints
+    }
+    
+    return result
+```
+
+2023-10-22 17:57:12 [INFO] 
+Code running:
+```
+def analyze_data(dfs: list[pd.DataFrame]) ->dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    df = dfs[0]
+    brooklyn_complaints = df[df['borough'] == 'BROOKLYN']['complaint_type'].value_counts()
+    result = {'type': 'dataframe', 'value': brooklyn_complaints}
+    return result
+        ```
+2023-10-22 17:57:12 [INFO] Answer: {'type': 'dataframe', 'value': Illegal Parking                   54
+HEAT/HOT WATER                    25
+UNSANITARY CONDITION              17
+WATER LEAK                        13
+Noise - Residential               10
+Illegal Dumping                    9
+Blocked Driveway                   9
+Graffiti                           9
+Missed Collection                  8
+Dirty Condition                    7
+GENERAL                            6
+PAINT/PLASTER                      6
+Noise - Street/Sidewalk            5
+Noise - Helicopter                 5
+Residential Disposal Complaint     4
+Street Condition                   4
+Mobile Food Vendor                 4
+For Hire Vehicle Complaint         4
+Encampment                         4
+Abandoned Vehicle                  4
+DOOR/WINDOW                        4
+Water System                       3
+General Construction/Plumbing      3
+Rodent                             3
+Non-Emergency Police Matter        3
+Maintenance or Facility            3
+Building/Use                       3
+Homeless Person Assistance         3
+New Tree Request                   2
+Consumer Complaint                 2
+Dead Animal                        2
+Urinating in Public                1
+Food Establishment                 1
+Noise                              1
+Street Sign - Missing              1
+Indoor Air Quality                 1
+Noise - Park                       1
+Highway Condition                  1
+Asbestos                           1
+Bike/Roller/Skate Chronic          1
+Animal-Abuse                       1
+PLUMBING                           1
+Obstruction                        1
+Noise - Vehicle                    1
+Sewer                              1
+Elevator                           1
+SAFETY                             1
+FLOORING/STAIRS                    1
+Damaged Tree                       1
+Name: complaint_type, dtype: int64}
+2023-10-22 17:57:12 [INFO] Executed in: 0.08612895011901855s
+2023-10-22 17:58:30 [INFO] Question: Summarize the complaints of all the people who live in Brooklyn?
+2023-10-22 17:58:30 [INFO] Running PandasAI with openai LLM...
+2023-10-22 17:58:30 [INFO] Prompt ID: f4b42841-e5ab-4fc2-bc2f-6d878e285a9e
+2023-10-22 17:58:30 [INFO] Using cached response
+2023-10-22 17:58:30 [INFO] Code generated:
+```
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    # Prepare: Preprocessing and cleaning data if necessary
+    df = dfs[0]
+    
+    # Process: Manipulating data for analysis
+    brooklyn_complaints = df[df['borough'] == 'BROOKLYN']['complaint_type'].value_counts()
+    
+    # Analyze: Conducting the actual analysis
+    result = {
+        "type": "dataframe",
+        "value": brooklyn_complaints
+    }
+    
+    return result
+```
+
+2023-10-22 17:58:30 [INFO] 
+Code running:
+```
+def analyze_data(dfs: list[pd.DataFrame]) ->dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    df = dfs[0]
+    brooklyn_complaints = df[df['borough'] == 'BROOKLYN']['complaint_type'].value_counts()
+    result = {'type': 'dataframe', 'value': brooklyn_complaints}
+    return result
+        ```
+2023-10-22 17:58:30 [INFO] Answer: {'type': 'dataframe', 'value': Illegal Parking                   54
+HEAT/HOT WATER                    24
+UNSANITARY CONDITION              16
+WATER LEAK                        13
+Noise - Residential               10
+Illegal Dumping                    9
+Graffiti                           9
+Blocked Driveway                   9
+Missed Collection                  8
+Dirty Condition                    7
+PAINT/PLASTER                      6
+GENERAL                            6
+Noise - Street/Sidewalk            5
+Noise - Helicopter                 5
+Encampment                         4
+Mobile Food Vendor                 4
+Street Condition                   4
+Residential Disposal Complaint     4
+For Hire Vehicle Complaint         4
+Abandoned Vehicle                  4
+DOOR/WINDOW                        4
+Homeless Person Assistance         3
+Water System                       3
+General Construction/Plumbing      3
+Rodent                             3
+Maintenance or Facility            3
+Building/Use                       3
+Non-Emergency Police Matter        3
+Dead Animal                        2
+New Tree Request                   2
+Consumer Complaint                 2
+Elevator                           1
+Bike/Roller/Skate Chronic          1
+ELECTRIC                           1
+Damaged Tree                       1
+Noise                              1
+Street Sign - Missing              1
+Indoor Air Quality                 1
+Noise - Park                       1
+Highway Condition                  1
+Asbestos                           1
+Animal-Abuse                       1
+Urinating in Public                1
+PLUMBING                           1
+Obstruction                        1
+Sewer                              1
+SAFETY                             1
+Noise - Vehicle                    1
+FLOORING/STAIRS                    1
+Food Establishment                 1
+OUTSIDE BUILDING                   1
+Name: complaint_type, dtype: int64}
+2023-10-22 17:58:30 [INFO] Executed in: 0.08426690101623535s
+2023-10-22 18:00:22 [INFO] Question: Summarize the complaints of all the people who live in Brooklyn?
+2023-10-22 18:00:22 [INFO] Running PandasAI with openai LLM...
+2023-10-22 18:00:22 [INFO] Prompt ID: ba8aa8ae-3bac-41f0-83de-7758702fbcb9
+2023-10-22 18:00:22 [INFO] Using cached response
+2023-10-22 18:00:22 [INFO] Code generated:
+```
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    # Prepare: Preprocessing and cleaning data if necessary
+    df = dfs[0]
+    
+    # Process: Manipulating data for analysis
+    brooklyn_complaints = df[df['borough'] == 'BROOKLYN']['complaint_type'].value_counts()
+    
+    # Analyze: Conducting the actual analysis
+    result = {
+        "type": "dataframe",
+        "value": brooklyn_complaints
+    }
+    
+    return result
+```
+
+2023-10-22 18:00:22 [INFO] 
+Code running:
+```
+def analyze_data(dfs: list[pd.DataFrame]) ->dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    df = dfs[0]
+    brooklyn_complaints = df[df['borough'] == 'BROOKLYN']['complaint_type'].value_counts()
+    result = {'type': 'dataframe', 'value': brooklyn_complaints}
+    return result
+        ```
+2023-10-22 18:00:22 [INFO] Answer: {'type': 'dataframe', 'value': Illegal Parking                   54
+HEAT/HOT WATER                    25
+UNSANITARY CONDITION              17
+WATER LEAK                        13
+Noise - Residential               10
+Illegal Dumping                    9
+Blocked Driveway                   9
+Graffiti                           9
+Missed Collection                  8
+Dirty Condition                    7
+GENERAL                            6
+PAINT/PLASTER                      6
+Noise - Street/Sidewalk            5
+Noise - Helicopter                 5
+Residential Disposal Complaint     4
+Street Condition                   4
+Mobile Food Vendor                 4
+For Hire Vehicle Complaint         4
+Encampment                         4
+Abandoned Vehicle                  4
+DOOR/WINDOW                        4
+Water System                       3
+General Construction/Plumbing      3
+Rodent                             3
+Non-Emergency Police Matter        3
+Maintenance or Facility            3
+Building/Use                       3
+Homeless Person Assistance         3
+New Tree Request                   2
+Consumer Complaint                 2
+Dead Animal                        2
+Urinating in Public                1
+Food Establishment                 1
+Noise                              1
+Street Sign - Missing              1
+Indoor Air Quality                 1
+Noise - Park                       1
+Highway Condition                  1
+Asbestos                           1
+Bike/Roller/Skate Chronic          1
+Animal-Abuse                       1
+PLUMBING                           1
+Obstruction                        1
+Noise - Vehicle                    1
+Sewer                              1
+Elevator                           1
+SAFETY                             1
+FLOORING/STAIRS                    1
+Damaged Tree                       1
+Name: complaint_type, dtype: int64}
+2023-10-22 18:00:22 [INFO] Executed in: 0.08275771141052246s
+2023-10-22 18:01:15 [INFO] Question: Summarize the complaints of all the people who live in Brooklyn?
+2023-10-22 18:01:15 [INFO] Running PandasAI with openai LLM...
+2023-10-22 18:01:15 [INFO] Prompt ID: 86649fce-aea2-41c1-baff-f673b64ff007
+2023-10-22 18:01:15 [INFO] Using cached response
+2023-10-22 18:01:15 [INFO] Code generated:
+```
+# TODO import all the dependencies required
+import pandas as pd
+
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    # Prepare: Preprocessing and cleaning data if necessary
+    df = dfs[0]
+    
+    # Process: Manipulating data for analysis
+    brooklyn_complaints = df[df['borough'] == 'BROOKLYN']['complaint_type'].value_counts()
+    
+    # Analyze: Conducting the actual analysis
+    result = {
+        "type": "dataframe",
+        "value": brooklyn_complaints
+    }
+    
+    return result
+```
+
+2023-10-22 18:01:15 [INFO] 
+Code running:
+```
+def analyze_data(dfs: list[pd.DataFrame]) ->dict:
+    """
+    Analyze the data
+    1. Prepare: Preprocessing and cleaning data if necessary
+    2. Process: Manipulating data for analysis (grouping, filtering, aggregating, etc.)
+    3. Analyze: Conducting the actual analysis (if the user asks to plot a chart save it to an image in temp_chart.png and do not show the chart.)
+    At the end, return a dictionary of:
+    - type (possible values "string", "number", "dataframe", "plot")
+    - value (can be a string, a dataframe or the path of the plot, NOT a dictionary)
+    Examples: 
+        { "type": "string", "value": "The highest salary is $9,000." }
+        or
+        { "type": "number", "value": 125 }
+        or
+        { "type": "dataframe", "value": pd.DataFrame({...}) }
+        or
+        { "type": "plot", "value": "temp_chart.png" }
+    """
+    df = dfs[0]
+    brooklyn_complaints = df[df['borough'] == 'BROOKLYN']['complaint_type'].value_counts()
+    result = {'type': 'dataframe', 'value': brooklyn_complaints}
+    return result
+        ```
+2023-10-22 18:01:15 [INFO] Answer: {'type': 'dataframe', 'value': Illegal Parking                   54
+HEAT/HOT WATER                    25
+UNSANITARY CONDITION              17
+WATER LEAK                        13
+Noise - Residential               10
+Illegal Dumping                    9
+Blocked Driveway                   9
+Graffiti                           9
+Missed Collection                  8
+Dirty Condition                    7
+GENERAL                            6
+PAINT/PLASTER                      6
+Noise - Street/Sidewalk            5
+Noise - Helicopter                 5
+Residential Disposal Complaint     4
+Street Condition                   4
+Mobile Food Vendor                 4
+For Hire Vehicle Complaint         4
+Encampment                         4
+Abandoned Vehicle                  4
+DOOR/WINDOW                        4
+Water System                       3
+General Construction/Plumbing      3
+Rodent                             3
+Non-Emergency Police Matter        3
+Maintenance or Facility            3
+Building/Use                       3
+Homeless Person Assistance         3
+New Tree Request                   2
+Consumer Complaint                 2
+Dead Animal                        2
+Urinating in Public                1
+Food Establishment                 1
+Noise                              1
+Street Sign - Missing              1
+Indoor Air Quality                 1
+Noise - Park                       1
+Highway Condition                  1
+Asbestos                           1
+Bike/Roller/Skate Chronic          1
+Animal-Abuse                       1
+PLUMBING                           1
+Obstruction                        1
+Noise - Vehicle                    1
+Sewer                              1
+Elevator                           1
+SAFETY                             1
+FLOORING/STAIRS                    1
+Damaged Tree                       1
+Name: complaint_type, dtype: int64}
+2023-10-22 18:01:15 [INFO] Executed in: 0.08553314208984375s
